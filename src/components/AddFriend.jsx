@@ -14,7 +14,7 @@ const AddFriend = ({ handleCloseModalAddFriend }) => {
   const [results, setResults] = useState([]);
   const { data, setData } = useContext(globalContext);
   const [error, setError] = useState(false);
-  // const { data, handler } = useContext(globalContext);
+
   const handleOpenModal = (event) => {
     handleCloseModalAddFriend(event);
   };
@@ -22,13 +22,15 @@ const AddFriend = ({ handleCloseModalAddFriend }) => {
   const handleSearch = () => {
     if (phone.trim() !== "" && phone.length >= 9 && phone.length <= 10) {
       setResults([]);
-      api({ url: "/user/find", method: typeHTTP.GET }).then((res) => {
-        const filteredResults = res.filter((item) =>
-          item.phone.includes(phone.toLowerCase())
-        );
-        setResults(filteredResults);
-        setError(filteredResults.length === 0);
-      });
+      api({ url: `/user/find?phone=${phone}`, method: typeHTTP.GET }).then(
+        (res) => {
+          const filteredResults = res.filter((item) =>
+            item.phone.includes(phone)
+          );
+          setResults(filteredResults);
+          setError(filteredResults.length === 0);
+        }
+      );
     } else {
       setError(true);
     }
@@ -39,6 +41,11 @@ const AddFriend = ({ handleCloseModalAddFriend }) => {
       fromUser: data.user,
       toUser,
     };
+    setResults((prevResults) =>
+      prevResults.map((result) =>
+        result._id === toUser._id ? { ...result, status: "pending" } : result
+      )
+    );
     api({
       body: body,
       url: "/user/send-request-add-friend",
@@ -58,70 +65,26 @@ const AddFriend = ({ handleCloseModalAddFriend }) => {
             },
           };
         });
-        handleOpenModal();
-        setData.user(res);
       }
-    });
-  };
-  const handleRefuse = (toUser) => {
-    const body = {
-      fromUser: data.user,
-      toUser,
-    };
-    api({
-      body: body,
-      url: "/user/refuse-request",
-      method: typeHTTP.POST,
-    }).then((res) => {
-      console.log(res);
-    });
-  };
-
-  const handleAccept = (toUser) => {
-    const body = {
-      fromUser: data.user,
-      toUser,
-    };
-    api({
-      body: body,
-      url: "/user/accept-request",
-      method: typeHTTP.POST,
-    }).then((res) => {
-      console.log(res);
     });
   };
 
   const checkRelationship = (otherUser) => {
-    if (
-      data.user.friends.map((item) => item.friendId).includes(otherUser._id)
-    ) {
-      const friend = data.user.friends.filter(
-        (item) => item.friendId === otherUser._id
-      )[0];
+    const friend = data.user.friends.find(
+      (item) => item.friendId === otherUser._id
+    );
+    if (friend) {
       if (friend.status === "pending") {
         return <Button disabled>Đã gửi lời mời kết bạn</Button>;
       } else {
-        if (friend.status === "request") {
-          return (
-            <>
-              <Button
-                variant="contained"
-                onClick={() => handleAccept(otherUser)}
-              >
-                Chấp nhận
-              </Button>
-              <Button
-                variant="contained"
-                onClick={() => handleRefuse(otherUser)}
-              >
-                Từ chối
-              </Button>
-            </>
-          );
-        } else {
-          return <Button variant="contained">Ban bè</Button>;
-        }
+        return (
+          <Button variant="contained" disabled>
+            Bạn bè
+          </Button>
+        );
       }
+    } else if (otherUser.status === "pending") {
+      return <Button disabled>Đã gửi lời mời kết bạn</Button>;
     } else {
       return (
         <Button
@@ -133,6 +96,7 @@ const AddFriend = ({ handleCloseModalAddFriend }) => {
       );
     }
   };
+
   return (
     <Box
       sx={{
