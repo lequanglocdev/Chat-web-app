@@ -2,18 +2,15 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import TextField from "@mui/material/TextField";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import SearchIcon from "@mui/icons-material/Search";
 import React, { useContext, useState, useEffect } from "react";
 import { globalContext } from "../context/globalContext";
 import { api, typeHTTP } from "../utils/api";
 import PhotoCameraBackIcon from "@mui/icons-material/PhotoCameraBack";
 import { styled } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
-import CheckIcon from "@mui/icons-material/Check";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { Alert } from "@mui/material";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -28,8 +25,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const AddGroup = ({ handleCloseModalAddGroup }) => {
-  const [openModal, setOpenModal] = React.useState(false);
-  const { data } = useContext(globalContext);
+  const { data, handler } = useContext(globalContext);
   const [result, setResult] = useState([]);
   const [phone, setPhone] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -37,9 +33,19 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
   const [image, setImage] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
   const [showIcon, setShowIcon] = useState(true);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [groups, setGroups] = useState([]);
   const handleOpenModal = (event) => {
     handleCloseModalAddGroup(event);
   };
+  useEffect(() => {
+    api({
+      url: `/room/get-by-user/${data.user?._id}`,
+      method: typeHTTP.GET,
+    }).then((res) => {
+      handler.setRooms(res);
+    });
+  }, [data.user]);
   const handleSearch = () => {
     setResult([]);
     api({ url: "/user/find", method: typeHTTP.GET }).then((res) => {
@@ -57,7 +63,6 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
     const files = e.target.files;
     setImage(files[0]);
     const imageUrl = URL.createObjectURL(files[0]);
-    // Lưu URL vào state hoặc props để hiển thị hình ảnh
     setImageUrl(imageUrl);
     setShowIcon(false);
   };
@@ -84,7 +89,9 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
         method: typeHTTP.POST,
         body: formData,
       }).then((res) => {
-        alert("Đăng ký nhóm thành công ");
+        // alert("Thông báo thành công");
+        setShowSuccessAlert(true);
+        handler.setCurrentRoom(null);
       });
     }
   };
@@ -105,6 +112,20 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
         flexDirection: "column",
       }}
     >
+      {showSuccessAlert && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: "20px",
+            right: "-260px",
+            zIndex: 9999, // Ensure it's above other content
+          }}
+        >
+          <Alert variant="filled" severity="success">
+            Tạo nhóm thành công
+          </Alert>
+        </Box>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -142,6 +163,7 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
               onChange={(e) => handleFile(e)}
             />
             <img
+              alt={imageUrl}
               src={imageUrl}
               style={{
                 width: "46px",
@@ -195,7 +217,6 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={handleEnterPress}
           />
-        
         </Box>
 
         <Box
@@ -250,7 +271,7 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
                     src={user?.image}
                     height={"40px"}
                     width={"40px"}
-                    style={{ borderRadius: "50%",objectFit:"cover" }}
+                    style={{ borderRadius: "50%", objectFit: "cover" }}
                   />
                   <Typography>{user?.username}</Typography>
                 </Box>
@@ -311,7 +332,7 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
                   src={user?.image}
                   height={"40px"}
                   width={"40px"}
-                  style={{ borderRadius: "50%" ,objectFit:"cover"}}
+                  style={{ borderRadius: "50%", objectFit: "cover" }}
                 />
                 <Typography variant="span">
                   {user?.username.length > 10

@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { api, typeHTTP, baseURLOrigin } from "../utils/api";
+import { api, typeHTTP } from "../utils/api";
 import { globalContext } from "../context/globalContext";
 import { getRemainUserForSingleRoom } from "../utils/getRemainUserForSingleRoom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { io } from "socket.io-client";
-const socket = io.connect(baseURLOrigin);
 const Chat = () => {
   const { data, handler } = useContext(globalContext);
-  const [messages, setMessages] = useState([]);
+
   const [lastMessages, setLastMessages] = useState({});
 
   useEffect(() => {
@@ -35,10 +33,31 @@ const Chat = () => {
           p={2}
         >
           Tin nhắn của {data.user?.username}
-          {/* <img src={data.user?.image}/> */}
         </Typography>
       </Box>
-      <Box>
+      <Box
+        sx={{
+          maxHeight: "520px",
+          overflow: "auto",
+          marginLeft: "6px",
+          gap: 2,
+          cursor: "pointer",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#ccc",
+            borderRadius: "4px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "#ccc",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "#ddd",
+            borderRadius: "8px",
+          },
+        }}
+      >
         {data.rooms.map((room, index) => {
           const otherUser = getRemainUserForSingleRoom(room, data.user?._id);
           const lastMessage = lastMessages[room._id];
@@ -46,12 +65,10 @@ const Chat = () => {
             <Box
               onClick={() => handler.setCurrentRoom(room)}
               key={index}
-              style={{
+              sx={{
                 display: "flex",
                 alignItems: "center",
                 padding: "6px",
-                gap: 5,
-                cursor: "pointer",
               }}
             >
               <img

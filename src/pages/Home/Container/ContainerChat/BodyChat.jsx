@@ -3,19 +3,16 @@ import Box from "@mui/material/Box";
 import FilterSharpIcon from "@mui/icons-material/FilterSharp";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
 import TextField from "@mui/material/TextField";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import Typography from "@mui/material/Typography";
 import { Stack } from "@mui/material";
 import { Paper } from "@mui/material";
-import Button from "@mui/material/Button";
 import { globalContext } from "../../../../context/globalContext";
 import { api, baseURLOrigin, typeHTTP } from "../../../../utils/api";
 import { io } from "socket.io-client";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import IconButton from "@mui/material/IconButton";
 import Picker from "emoji-picker-react";
 const socket = io.connect(baseURLOrigin);
 
@@ -23,7 +20,6 @@ const heightBody = "592px";
 const heightChat = "486px";
 const heightText = `calc(${heightBody} - ${heightChat})`;
 
-const options = ["Thu hồi tin nhắn"];
 const ITEM_HEIGHT = 48;
 
 const BodyChat = () => {
@@ -251,10 +247,6 @@ const BodyChat = () => {
                 )}
               </Box>
               <Box
-                // aria-label="more"
-                // id="long-button"
-                // aria-controls={open ? "long-menu" : undefined}
-                // aria-expanded={open ? "true" : undefined}
                 aria-haspopup="true"
                 onClick={handleClick}
                 sx={{
@@ -286,10 +278,7 @@ const BodyChat = () => {
                   },
                 }}
               >
-                <MenuItem
-                  // key={item._id}
-                  onClick={() => handleSendDisable(item._id)}
-                >
+                <MenuItem onClick={() => handleSendDisable(item._id)}>
                   Thu hồi tin nhắn
                 </MenuItem>
               </Menu>
@@ -331,16 +320,12 @@ const BodyChat = () => {
           <TextField
             fullWidth
             placeholder="nhập tin nhắn"
-            multiline // Đánh dấu TextField là nhiều dòng
-            maxRows={5} // Giới hạn số dòng hiển thị (thay đổi giá trị tùy theo nhu cầu)
             onChange={(e) => setMessage(e.target.value)}
             value={message}
             onKeyPress={handleKeyPress}
             sx={{
               "& .MuiInputBase-root": {
                 paddingRight: "50px",
-                // paddingTop: "100px",
-                // overflow: "hidden",
               },
             }}
           />

@@ -32,7 +32,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Info = () => {
-  const { data, handler } = useContext(globalContext); // Lấy dữ liệu từ global context
+  const { data, handler } = useContext(globalContext); 
   const username = data.user?.username;
   const phone = data.user?.phone;
   const gender = data.user?.gender;
@@ -63,7 +63,6 @@ const Info = () => {
       console.log("Access token is missing");
       return;
     }
-    //console.log("accessToken of update:", token);
     try {
       const res = await api({
         method: typeHTTP.POST,

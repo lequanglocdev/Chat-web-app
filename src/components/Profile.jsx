@@ -25,13 +25,10 @@ const style = {
 };
 
 const Profile = () => {
-  const { data } = useContext(globalContext); // Lấy dữ liệu từ global context
-
-  // Dùng dữ liệu từ global context
+  const { data } = useContext(globalContext); 
   const username = data.user?.username;
   const avatar = data.user?.image;
-  //console.log("avatar", image);
-  // console.log("username", username);
+
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -59,7 +56,6 @@ const Profile = () => {
 
   return (
     <Box>
-      {/*  Avata */}
       <Tooltip>
         <IconButton
           onClick={handleClick}
@@ -70,7 +66,6 @@ const Profile = () => {
         >
           <Avatar
             sx={{ width: 40, height: 40 }}
-            // src="https://avatars.githubusercontent.com/u/107296302?v=4"
             src={avatar}
           ></Avatar>
         </IconButton>

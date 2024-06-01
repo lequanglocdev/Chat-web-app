@@ -5,12 +5,11 @@ import DraftsIcon from "@mui/icons-material/Drafts";
 import Typography from "@mui/material/Typography";
 import Search from "~/components/Search";
 import React, { useState } from "react";
-import Badge from "@mui/material/Badge";
 const ListPhone = ({ onSelect, friendRequests }) => {
   const [activeTab, setActiveTab] = useState("friends");
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    onSelect(tab); // Gọi hàm onSelect để truyền trạng thái xuống component cha
+    onSelect(tab); 
   };
   return (
     <Box
@@ -33,7 +32,7 @@ const ListPhone = ({ onSelect, friendRequests }) => {
             height: "56px",
             cursor: "pointer",
             backgroundColor:
-              activeTab === "friends" ? "#74b9ff" : "transparent", // Thay đổi màu nền khi mục được chọn
+              activeTab === "friends" ? "#74b9ff" : "transparent",
           }}
           onClick={() => handleTabClick("friends")}
         >
@@ -68,9 +67,6 @@ const ListPhone = ({ onSelect, friendRequests }) => {
           }}
           onClick={() => handleTabClick("invitations")}
         >
-          {/* <Badge badgeContent={1} color="primary">
-            <DraftsIcon />
-          </Badge> */}
           <DraftsIcon />
           <Typography sx={{ marginLeft: "20px" }}>Lời mời kết bạn</Typography>
         </Box>
