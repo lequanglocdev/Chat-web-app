@@ -58,7 +58,7 @@ const Chat = () => {
           },
         }}
       >
-        {data.rooms.map((room, index) => {
+        {data?.rooms.map((room, index) => {
           const otherUser = getRemainUserForSingleRoom(room, data.user?._id);
           const lastMessage = lastMessages[room._id];
           return (

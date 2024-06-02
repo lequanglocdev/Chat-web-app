@@ -90,8 +90,10 @@ const AddGroup = ({ handleCloseModalAddGroup }) => {
         body: formData,
       }).then((res) => {
         // alert("Thông báo thành công");
-        setShowSuccessAlert(true);
+        handler.setRooms((prevRooms) => [...prevRooms, res]);
         handler.setCurrentRoom(null);
+        setShowSuccessAlert(true);
+        handleCloseModalAddGroup();
       });
     }
   };
